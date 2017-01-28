@@ -1,7 +1,9 @@
-package com.blackcurrantapps.awareuser;
+package com.blackcurrantapps.awareuser.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.blackcurrantapps.awareuser.R;
 import com.digits.sdk.android.Digits;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterCore;
