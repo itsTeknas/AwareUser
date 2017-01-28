@@ -19,6 +19,7 @@ import com.digits.sdk.android.AuthCallback;
 import com.digits.sdk.android.DigitsAuthButton;
 import com.digits.sdk.android.DigitsException;
 import com.digits.sdk.android.DigitsSession;
+import com.google.firebase.auth.FirebaseAuth;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        FirebaseAuth.getInstance().signInAnonymously();
     }
 
     private void requestPermissions() {

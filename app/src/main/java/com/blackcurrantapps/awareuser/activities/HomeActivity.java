@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.blackcurrantapps.awareuser.R;
 import com.blackcurrantapps.awareuser.util.RoundedImageView;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.Drawer;
@@ -41,6 +42,7 @@ public class HomeActivity extends AppCompatActivity implements MainActivityConne
 
     private FragmentManager fragmentManager;
     private Drawer drawer = null;
+    DatabaseReference databaseReference;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +71,8 @@ public class HomeActivity extends AppCompatActivity implements MainActivityConne
             });
         }
         createDrawer(savedInstanceState);
+
+        databaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     private void createDrawer(Bundle savedInstanceState) {
@@ -161,6 +165,11 @@ public class HomeActivity extends AppCompatActivity implements MainActivityConne
     @Override
     public void showActivityToast(String message) {
         Snackbar.make(mainActivityRootLayout, message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public DatabaseReference getDatabaseReference() {
+        return databaseReference;
     }
 
     @Override
