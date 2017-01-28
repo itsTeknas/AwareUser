@@ -2,6 +2,7 @@ package com.blackcurrantapps.awareuser.activities;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -65,6 +66,11 @@ public class MainActivity extends AppCompatActivity {
             public void success(DigitsSession session, String phoneNumber) {
                 Toast.makeText(getApplicationContext(), "Authentication successful for "
                         + phoneNumber, Toast.LENGTH_LONG).show();
+
+                Intent intent = new Intent(MainActivity.this,HomeActivity.class);
+                intent.putExtra("CELL",phoneNumber.substring(phoneNumber.length()-10,phoneNumber.length()));
+                startActivity(intent);
+                finish();
             }
 
             @Override
