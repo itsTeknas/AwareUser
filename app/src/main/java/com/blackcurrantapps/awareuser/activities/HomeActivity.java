@@ -14,6 +14,8 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.blackcurrantapps.awareuser.R;
+import com.blackcurrantapps.awareuser.fragments.Group;
+import com.blackcurrantapps.awareuser.fragments.RidesFrag;
 import com.blackcurrantapps.awareuser.util.RoundedImageView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -29,6 +31,7 @@ import butterknife.ButterKnife;
 public class HomeActivity extends AppCompatActivity implements MainActivityConnect {
 
     private String cell = "";
+    private String groupKey = "";
 
     private final PrimaryDrawerItem rides = new PrimaryDrawerItem().withName("Rides").withIcon(GoogleMaterial.Icon.gmd_dashboard);
     private final PrimaryDrawerItem group = new PrimaryDrawerItem().withName("Group").withIcon(GoogleMaterial.Icon.gmd_group);
@@ -73,6 +76,8 @@ public class HomeActivity extends AppCompatActivity implements MainActivityConne
         createDrawer(savedInstanceState);
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.child("users").child(cell).keepSynced(true);
+        addFragment(new RidesFrag(),true);
     }
 
     private void createDrawer(Bundle savedInstanceState) {
@@ -109,10 +114,10 @@ public class HomeActivity extends AppCompatActivity implements MainActivityConne
                         Log.v("Drawer Click", "" + position);
                         switch (position) {
                             case 1:
-
+                                addFragment(new RidesFrag(),true);
                                 break;
                             case 2:
-
+                                addFragment(new Group(),true);
                                 break;
                         }
                         return false;
@@ -171,6 +176,12 @@ public class HomeActivity extends AppCompatActivity implements MainActivityConne
     public DatabaseReference getDatabaseReference() {
         return databaseReference;
     }
+
+    @Override
+    public String getCell() {
+        return cell;
+    }
+
 
     @Override
     public void setToolbarTitle(String title) {

@@ -17,4 +17,6 @@ public interface MainActivityConnect {
     void showActivityToast(String message);
 
     DatabaseReference getDatabaseReference();
+
+    String getCell();
 }
