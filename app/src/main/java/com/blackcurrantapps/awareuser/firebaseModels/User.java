@@ -16,14 +16,15 @@ public class User {
 
     public String age;
     public String name;
+    public String mac_id;
 
     public User() {
     }
 
-    public User(String age, String name) {
-
+    public User(String age, String name, String mac_id) {
         this.age = age;
         this.name = name;
+        this.mac_id = mac_id;
     }
 
     public String getAge() {
@@ -47,6 +48,7 @@ public class User {
         HashMap<String, Object> result = new HashMap<>();
         result.put("age", age);
         result.put("name", name);
+        result.put("mac_id", mac_id);
         return result;
     }
 }

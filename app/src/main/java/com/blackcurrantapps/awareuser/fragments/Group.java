@@ -20,6 +20,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -75,9 +79,26 @@ public class Group extends Fragment {
                         User.class, R.layout.group_item, UserHolder.class, mRef) {
 
                     @Override
-                    protected void populateViewHolder(UserHolder viewHolder, User user, int position) {
+                    protected void populateViewHolder(final UserHolder viewHolder, User user, int position) {
                         viewHolder.personName.setText(user.name);
                         viewHolder.personDesc.setText(user.age);
+
+                        mainActivityConnect.getDatabaseReference().child("mac_id").child(user.mac_id).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                String name = (String) dataSnapshot.child("nearest_base_station_name").getValue();
+                                Long ts = (Long) dataSnapshot.child("update_timestamp").getValue();
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+
+                                viewHolder.personDesc.setText("Last seen at "+sdf.format(new Date(ts))+" near "+ name);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
                     }
 
                 };
