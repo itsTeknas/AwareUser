@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.blackcurrantapps.awareuser.R;
 import com.digits.sdk.android.AuthCallback;
+import com.digits.sdk.android.Digits;
 import com.digits.sdk.android.DigitsAuthButton;
 import com.digits.sdk.android.DigitsException;
 import com.digits.sdk.android.DigitsSession;
@@ -79,6 +80,18 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("Digits", "Sign in with Digits failure", exception);
             }
         });
+
+        if (Digits.getActiveSession()!=null){
+            DigitsSession session = Digits.getActiveSession();
+            String phoneNumber = session.getPhoneNumber();
+            Toast.makeText(getApplicationContext(), "Authentication successful for "
+                    + phoneNumber, Toast.LENGTH_LONG).show();
+
+            Intent intent = new Intent(MainActivity.this,HomeActivity.class);
+            intent.putExtra("CELL",phoneNumber.substring(phoneNumber.length()-10,phoneNumber.length()));
+            startActivity(intent);
+            finish();
+        }
 
         FirebaseAuth.getInstance().signInAnonymously();
     }

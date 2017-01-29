@@ -1,6 +1,7 @@
 package com.blackcurrantapps.awareuser.activities;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -17,6 +18,7 @@ import com.blackcurrantapps.awareuser.R;
 import com.blackcurrantapps.awareuser.fragments.Group;
 import com.blackcurrantapps.awareuser.fragments.RidesFrag;
 import com.blackcurrantapps.awareuser.util.RoundedImageView;
+import com.digits.sdk.android.Digits;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -24,6 +26,7 @@ import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,6 +38,7 @@ public class HomeActivity extends AppCompatActivity implements MainActivityConne
 
     private final PrimaryDrawerItem rides = new PrimaryDrawerItem().withName("Rides").withIcon(GoogleMaterial.Icon.gmd_dashboard);
     private final PrimaryDrawerItem group = new PrimaryDrawerItem().withName("Group").withIcon(GoogleMaterial.Icon.gmd_group);
+    private final PrimaryDrawerItem logout = new PrimaryDrawerItem().withName("Logout").withIcon(GoogleMaterial.Icon.gmd_exit_to_app);
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -86,6 +90,7 @@ public class HomeActivity extends AppCompatActivity implements MainActivityConne
 
         TextView name = (TextView) header.findViewById(R.id.name);
         RoundedImageView profilePic = (RoundedImageView) header.findViewById(R.id.profilePic);
+        Picasso.with(HomeActivity.this).load(R.mipmap.ic_account_circle_white_48dp).into(profilePic);
         name.setText(cell);
 
         DrawerBuilder drawerBuilder;
@@ -97,7 +102,8 @@ public class HomeActivity extends AppCompatActivity implements MainActivityConne
                 .withSelectedItem(0)
                 .addDrawerItems(
                         rides,
-                        group
+                        group,
+                        logout
                 )
                 .withOnDrawerNavigationListener(new Drawer.OnDrawerNavigationListener() {
                     @Override
@@ -118,6 +124,11 @@ public class HomeActivity extends AppCompatActivity implements MainActivityConne
                                 break;
                             case 2:
                                 addFragment(new Group(),true);
+                                break;
+                            case 3:
+                                Digits.clearActiveSession();
+                                startActivity(new Intent(HomeActivity.this,MainActivity.class));
+                                finish();
                                 break;
                         }
                         return false;
