@@ -15,7 +15,12 @@ import com.blackcurrantapps.awareuser.R;
 import com.blackcurrantapps.awareuser.activities.MainActivityConnect;
 import com.blackcurrantapps.awareuser.firebaseModels.Ride;
 import com.blackcurrantapps.awareuser.util.firebase.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,11 +32,15 @@ import butterknife.ButterKnife;
 
 public class RidesFrag extends Fragment {
 
+    @BindView(R.id.hint)
+    TextView hint;
     private FirebaseRecyclerAdapter<Ride, RidesHolder> mRecyclerViewAdapter;
 
     MainActivityConnect mainActivityConnect;
     @BindView(R.id.ridesList)
     RecyclerView ridesList;
+
+    String own_mac_id;
 
     @Override
     public void onAttach(Context context) {
@@ -43,6 +52,67 @@ public class RidesFrag extends Fragment {
     public void onResume() {
         super.onResume();
         mainActivityConnect.setToolbarTitle("Rides");
+
+        mainActivityConnect.getDatabaseReference().child("users").child(mainActivityConnect.getCell()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                own_mac_id = (String) dataSnapshot.child("mac_id").getValue();
+
+                mainActivityConnect.getDatabaseReference().child("mac_id").child(own_mac_id).child("visits").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Iterable<DataSnapshot> visits = dataSnapshot.getChildren();
+                        final HashMap<String, Void> visitsHashMap = new HashMap<String, Void>();
+                        for (DataSnapshot visit : visits) {
+                            visitsHashMap.put(visit.getKey(), null);
+                        }
+                        mainActivityConnect.getDatabaseReference().child("rides").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Iterable<DataSnapshot> rides = dataSnapshot.getChildren();
+
+                                Double minWait = 10000.0;
+                                DataSnapshot selectedRide = null;
+
+                                for (DataSnapshot ride : rides) {
+                                    if (!visitsHashMap.containsKey(ride.getKey())) {
+                                        Integer devices_count = Integer.valueOf(String.valueOf(ride.child("current_nearby_devices_count").getValue()));
+                                        Integer ride_minutes =  Integer.valueOf(String.valueOf(ride.child("ride_time_minutes").getValue()));
+                                        Integer group_size = Integer.valueOf(String.valueOf(ride.child("ride_group_size").getValue()));
+                                        Double wait = (double) ( devices_count/ group_size) *ride_minutes;
+                                        if (wait < minWait) {
+                                            minWait = wait;
+                                            selectedRide = ride;
+                                        }
+                                    }
+                                }
+
+                                if (selectedRide != null) {
+                                    hint.setText("Head over to "+selectedRide.child("name").getValue()+" for the minimum waiting queue");
+                                } else {
+                                    hint.setText("You seem to have explored the entire park !\nWe hope you had a great time :)");
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Nullable
@@ -71,7 +141,7 @@ public class RidesFrag extends Fragment {
                 viewHolder.rideName.setText(ride.name);
                 viewHolder.queueLength.setText(ride.current_nearby_devices_count + " people in queue");
                 viewHolder.rideDescription.setText(ride.description);
-                viewHolder.waitingTime.setText(String.valueOf((ride.current_nearby_devices_count/ride.ride_group_size) * ride.ride_time_minutes));
+                viewHolder.waitingTime.setText(String.valueOf((ride.current_nearby_devices_count / ride.ride_group_size) * ride.ride_time_minutes));
                 viewHolder.waitingUnits.setText("minutes");
             }
         };
@@ -86,7 +156,7 @@ public class RidesFrag extends Fragment {
         }
     }
 
-    public static class RidesHolder extends RecyclerView.ViewHolder{
+    public static class RidesHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.rideName)
         TextView rideName;
         @BindView(R.id.queueLength)

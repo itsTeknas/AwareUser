@@ -34,6 +34,7 @@ import butterknife.ButterKnife;
 public class HomeActivity extends AppCompatActivity implements MainActivityConnect {
 
     private String cell = "";
+    private String own_bssid = "";
     private String groupKey = "";
 
     private final PrimaryDrawerItem rides = new PrimaryDrawerItem().withName("Rides").withIcon(GoogleMaterial.Icon.gmd_dashboard);
