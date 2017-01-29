@@ -69,9 +69,9 @@ public class RidesFrag extends Fragment {
             @Override
             protected void populateViewHolder(RidesHolder viewHolder, Ride ride, int position) {
                 viewHolder.rideName.setText(ride.name);
-                viewHolder.queueLength.setText(ride.current_nearby_devices_count+" people in queue");
+                viewHolder.queueLength.setText(ride.current_nearby_devices_count + " people in queue");
                 viewHolder.rideDescription.setText(ride.description);
-                viewHolder.waitingTime.setText(String.valueOf((ride.current_nearby_devices_count/ride.ride_group_size)*ride.ride_time_minutes));
+                viewHolder.waitingTime.setText(String.valueOf((ride.current_nearby_devices_count/ride.ride_group_size) * ride.ride_time_minutes));
                 viewHolder.waitingUnits.setText("minutes");
             }
         };
